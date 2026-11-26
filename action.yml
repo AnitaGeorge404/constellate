@@ -1,0 +1,45 @@
+name: Constellate
+description: Turn your GitHub repositories into a living night sky for your profile.
+author: AnitaGeorge404
+branding:
+  icon: star
+  color: blue
+
+inputs:
+  github_user:
+    description: Whose sky to draw.
+    default: ${{ github.repository_owner }}
+  github_token:
+    description: Token used to read public activity.
+    default: ${{ github.token }}
+  output_dir:
+    description: Folder the SVGs are written to.
+    default: constellate
+  commit:
+    description: Commit and push the updated SVGs.
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Chart tonight's sky
+      shell: bash
+      run: node "${{ github.action_path }}/src/index.js"
+      env:
+        CONSTELLATE_USER: ${{ inputs.github_user }}
+        CONSTELLATE_OUT: ${{ inputs.output_dir }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+
+    - name: Commit
+      if: inputs.commit == 'true'
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add "${{ inputs.output_dir }}"
+        if git diff --cached --quiet; then
+          echo "Same sky as last night."
+        else
+          git commit -m "Chart tonight's sky"
+          git push
+        fi

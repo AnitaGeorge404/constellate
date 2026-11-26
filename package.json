@@ -1,0 +1,13 @@
+{
+  "name": "constellate",
+  "version": "1.0.0",
+  "description": "Your GitHub repositories as a living night sky.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "demo": "node src/index.js --demo --out examples",
+    "start": "node src/index.js"
+  }
+}
